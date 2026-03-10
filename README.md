@@ -94,10 +94,72 @@ Create a GITHUB repository for this project and add the link to it in the commen
 
 ## Questions
 
-* What is ORM and how is JPA used?  
-* What is the application.properties used for and where must it be stored?  
-* Which annotations are frequently used for entity types? Which key points must be observed?   
-* What methods do you need for CRUD operations?  
+Question
+What is ORM and how is JPA used?
+
+Answer
+ORM maps Java objects to database tables. JPA is the standard API used to manage this mapping (e.g., via Hibernate).
+
+Question
+What is the application.properties used for and where must it be stored?
+
+Answer
+It stores configurations (DB URL, credentials, ports) and must be located in src/main/resources.
+
+Question
+Which annotations are frequently used for entity types? Which key points must be observed?
+
+Answer
+@Entity, @Id, and @OneToMany. Key points: Entities require a primary key and a no-args constructor.
+
+Question
+What methods do you need for CRUD operations?
+
+Answer
+save() (Create/Update), findAll() / findById() (Read), and deleteById() (Delete).
+
+## Problems i ran into
+
+Troubleshooting Protocol: Data Warehouse Implementation
+1. Connection Error: Wrong Port (3306 vs. 8080)
+
+   Issue: curl: (1) Received HTTP/0.9 when not allowed.
+
+   Cause: Attempting to send HTTP requests directly to the MySQL Database on port 3306.
+
+   Resolution: Switched to port 8080, which is the entry point for the Spring Boot Application. The application acts as a bridge to the database.
+
+2. Logic Error: HTTP Method Mismatch (405)
+
+   Issue: 405 Method Not Allowed.
+
+   Cause: Using -X POST for the /all endpoint.
+
+   Resolution: Changed the request method to GET, as the @GetMapping annotation in the Java controller only accepts data retrieval requests.
+
+3. Syntax Error: PowerShell vs. Curl (Parameter Binding)
+
+   Issue: Cannot bind parameter 'Headers'.
+
+   Cause: Windows PowerShell uses an alias for curl that points to Invoke-WebRequest, which has different syntax for headers (-H).
+
+   Resolution: Used Invoke-RestMethod or curl.exe to ensure the JSON headers and body were parsed correctly.
+
+4. Client Error: Unsupported Media Type (415)
+
+   Issue: 415 Unsupported Media Type.
+
+   Cause: Sending data as plain text or form-data while the controller expects JSON (@RequestBody).
+
+   Resolution: Added the header -H "Content-Type: application/json" to inform the server about the data format.
+
+5. Server Error: Payload Mismatch (500/400)
+
+   Issue: 500 Internal Server Error or 400 Bad Request.
+
+   Cause: The JSON body did not match the Java Entity fields (e.g., using location instead of warehouseName) or missing required Primary Keys (warehouseID).
+
+   Resolution: Adjusted the JSON payload to exactly match the variable names and data types defined in the Warehouse and Product classes.
 
 ## Links & Further Resources
 
